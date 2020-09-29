@@ -28,7 +28,7 @@ public class Currency {
     private double value;
 
     //  list of getters and setters
-    
+
     public short getNumCode() {
         return numCode;
     }
