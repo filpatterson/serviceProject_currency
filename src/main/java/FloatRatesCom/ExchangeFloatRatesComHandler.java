@@ -2,6 +2,7 @@ package FloatRatesCom;
 
 import BnmRate.ExchangeRate;
 import Http.HttpUtility;
+import MongoDB.MongoDbHandler;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.mongodb.*;
 import com.mongodb.client.FindIterable;
@@ -21,7 +22,7 @@ import java.io.IOException;
 public class ExchangeFloatRatesComHandler {
     private static final String PATH_TO_FLOAT_COM_RATE = "http://www.floatrates.com/daily/usd.xml";
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws Exception {
         //  initialize utility for making http requests
         HttpUtility httpUtility = new HttpUtility();
 
@@ -31,37 +32,35 @@ public class ExchangeFloatRatesComHandler {
                 Channel.class);
 
         //  connect to mongodb, choose db and collection from db
-        MongoClient mongoClient = new MongoClient("localhost", 27017);
-        MongoDatabase database = mongoClient.getDatabase("myMongoDB");
-        MongoCollection<Document> collection = database.getCollection("newFloatRates");
+//        MongoClient mongoClient = new MongoClient("localhost", 27017);
+//        MongoDatabase database = mongoClient.getDatabase("myMongoDB");
+//        MongoCollection<Document> collection = database.getCollection("newFloatRates");
+        MongoDbHandler databaseHandler = new MongoDbHandler();
+        databaseHandler.establishConnectionToDB("localhost", 27017, "myMongoDB");
+        databaseHandler.establishConnectionToCollection("newFloatRates");
+        databaseHandler.setUniqueIndex("name");
 
-        //  make name as unique key in collection (throws error if is repeating)
-        collection.createIndex(new Document("name", 1), new IndexOptions().unique(true));
+//        //  make name as unique key in collection (throws error if is repeating)
+//        collection.createIndex(new Document("name", 1), new IndexOptions().unique(true));
+
+        System.out.println(valutes.getCurrencies().get(0).getClass());
 
         //  append all obtained information to the db
-        for(int i = 0; i < valutes.getCurrencies().size(); i++) {
-            CurrencyItem currentCurrency = valutes.getCurrencies().get(i);
-
-            //  insert if new and update if already present element in DB
-            collection.updateOne(Filters.eq("name", currentCurrency.getTargetName()),
-                    new Document("$set", new Document().
-                            append("link", currentCurrency.getLink()).
-                            append("rate", currentCurrency.getExchangeRate())),
-                    new UpdateOptions().upsert(true));
-
-        }
+//        for(int i = 0; i < valutes.getCurrencies().size(); i++) {
+//            CurrencyItem currentCurrency = valutes.getCurrencies().get(i);
+//
+//            //  insert if new and update if already present element in DB
+//            collection.updateOne(Filters.eq("name", currentCurrency.getTargetName()),
+//                    new Document("$set", new Document().
+//                            append("link", currentCurrency.getLink()).
+//                            append("rate", currentCurrency.getExchangeRate())),
+//                    new UpdateOptions().upsert(true));
+//
+//        }
+        databaseHandler.upsertCurrencies(valutes.getCurrencies());
 
         //  make a search request in DB, first find elements to iterate through and then adapt them to interpreter
-        FindIterable<Document> cursor = collection.find(Filters.eq("name", "Euro"));
-        MongoCursor<Document> mongoCursor = cursor.iterator();
-        try {
-            while (mongoCursor.hasNext()) {
-                System.out.println(mongoCursor.next());
-            }
-        } finally {
-            mongoCursor.close();
-        }
-
+        System.out.println(databaseHandler.findElements("newFloatRates", "name", "Euro"));
         System.out.println(valutes);
     }
 }
