@@ -69,7 +69,7 @@ public class MongoDbUtility {
                     collection.updateOne(Filters.eq("name", currentCurrency.getTargetName()),
                             new Document("$set", new Document().
                                     append("link", currentCurrency.getLink()).
-                                    append("rate", currentCurrency.getExchangeRate())),
+                                    append("value", currentCurrency.getExchangeRate())),
                             new UpdateOptions().upsert(true));
                 }
             } else if (currencies.get(0).getClass().equals(BnmCurrency.class)) {
@@ -83,6 +83,8 @@ public class MongoDbUtility {
                                     append("value", currentCurrency.getValue())),
                             new UpdateOptions().upsert(true));
                 }
+            } else {
+                throw new Exception("there is no collection for such class");
             }
         } else {
             throw new Exception("empty list sent to upsert");

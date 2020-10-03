@@ -2,8 +2,8 @@ package BnmRate;
 
 import Actor.Actor;
 import Actor.Behavior;
-import Actor.Supervisor;
 import Http.HttpUtility;
+import MongoDB.MongoDbUtility;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 import java.time.LocalDateTime;
@@ -38,8 +38,12 @@ public class BnmRatesHandler {
                                     sendGet(PATH_TO_BNM_RATE + DATE_TIME_FORMATTER.format(currentDate).toString()),
                             BnmExchangeRate.class);
 
-                    //  send all information to the actor responsible for interaction with database
-                    Supervisor.sendMessage("MongoDbCommunicator", exchangeRate.getCurrencies());
+                    //  create local tool for interaction with database
+                    MongoDbUtility databaseHandler = new MongoDbUtility();
+
+                    //  establish connection with database and send obtained records to db
+                    databaseHandler.establishConnectionToDB("localhost", 27017, "myMongoDB");
+                    databaseHandler.upsertCurrencies(exchangeRate.getCurrencies());
 
                     //  wait for another refresh time
                     Thread.sleep(updateRate);
@@ -60,7 +64,7 @@ public class BnmRatesHandler {
     //  standard getters, setters, constructors
 
     //  constructor with default value of refresh rate
-    BnmRatesHandler() {
+    public BnmRatesHandler() {
         //  make update rate by default once per hour
         updateRate = 3600000;
     }
