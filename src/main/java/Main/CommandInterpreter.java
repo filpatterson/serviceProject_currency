@@ -16,9 +16,30 @@ public class CommandInterpreter {
         String[] splitedCommand = command.split("[ ]+");
         switch(splitedCommand[0]){
             case("convert"):
-                if(splitedCommand[3].equals("to") && splitedCommand[6].equals("from")){
-                    System.out.println(convertCurrencies(splitedCommand[2], splitedCommand[4] + " " + splitedCommand[5], splitedCommand[7], Double.parseDouble(splitedCommand[1])));
-                };
+                byte lastIndex = (byte) (splitedCommand.length - 1);
+                byte sizeOfFirstArgument = 0;
+                byte sizeOfSecondArgument = 0;
+                StringBuilder firstArgument = new StringBuilder();
+                StringBuilder secondArgument = new StringBuilder();
+
+                for(byte i = 2; i < splitedCommand.length; i++) {
+                    if (splitedCommand[i].equals("to"))
+                        sizeOfFirstArgument = i;
+                    else if (splitedCommand[i].equals("from"))
+                        sizeOfSecondArgument = i;
+                }
+
+                for(byte i = 2; i < sizeOfFirstArgument; i++) {
+                    firstArgument.append(" ").append(splitedCommand[i]);
+                }
+
+                for(byte i = (byte) (sizeOfFirstArgument + 1); i < sizeOfSecondArgument; i++) {
+                    secondArgument.append(" ").append(splitedCommand[i]);
+                }
+
+                System.out.println(convertCurrencies(firstArgument.toString().trim(), secondArgument.toString().trim(),
+                        splitedCommand[lastIndex], Double.parseDouble(splitedCommand[1])));
+
             case ("find"):
                 if(splitedCommand[2].equals("from")) {
                     ArrayList<Document> result = mongoDbUtility.findElements(splitedCommand[3], "name", splitedCommand[1]);
