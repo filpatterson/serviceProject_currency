@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CurrencyItem {
+public class FloatCurrency {
     @JacksonXmlProperty(localName = "title")
     private String title;
 

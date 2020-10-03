@@ -1,7 +1,7 @@
 package MongoDB;
 
-import BnmRate.Currency;
-import FloatRatesCom.CurrencyItem;
+import BnmRate.BnmCurrency;
+import FloatRatesCom.FloatCurrency;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -15,7 +15,7 @@ import org.bson.Document;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MongoDbHandler {
+public class MongoDbUtility {
     private MongoClient client;
     private MongoDatabase database;
     private MongoCollection<Document> collection;
@@ -59,11 +59,11 @@ public class MongoDbHandler {
         //  no need to operate if was sent empty list (throw error)
         if(size > 0) {
             //  check list to be presented with FloatRatesCurrency class for correct handling
-            if(currencies.get(0).getClass().equals(CurrencyItem.class)){
+            if(currencies.get(0).getClass().equals(FloatCurrency.class)){
                 establishConnectionToCollection("newFloatRate");
                 for(int i = 0; i < size; i++) {
                     //  get each element individually
-                    CurrencyItem currentCurrency = (CurrencyItem) currencies.get(i);
+                    FloatCurrency currentCurrency = (FloatCurrency) currencies.get(i);
 
                     //  insert if new and update if already present element in DB
                     collection.updateOne(Filters.eq("name", currentCurrency.getTargetName()),
@@ -72,10 +72,10 @@ public class MongoDbHandler {
                                     append("rate", currentCurrency.getExchangeRate())),
                             new UpdateOptions().upsert(true));
                 }
-            } else if (currencies.get(0).getClass().equals(Currency.class)) {
+            } else if (currencies.get(0).getClass().equals(BnmCurrency.class)) {
                 establishConnectionToCollection("bnmRates");
                 for(int i = 0; i < size; i++) {
-                    Currency currentCurrency = (Currency) currencies.get(i);
+                    BnmCurrency currentCurrency = (BnmCurrency) currencies.get(i);
 
                     collection.updateOne(Filters.eq("name", currentCurrency.getName()),
                             new Document("$set", new Document().
@@ -98,7 +98,6 @@ public class MongoDbHandler {
      */
     public ArrayList<Document> findElements(String collectionName, String fieldName, String value) {
         establishConnectionToCollection(collectionName);
-
         //  find elements in db inside required field with requested value and create iterator to navigate through results
         FindIterable<Document> cursor = collection.find(Filters.eq(fieldName, value));
         MongoCursor<Document> mongoCursor = cursor.iterator();

@@ -1,23 +1,8 @@
 package FloatRatesCom;
 
-import BnmRate.ExchangeRate;
 import Http.HttpUtility;
-import MongoDB.MongoDbHandler;
+import MongoDB.MongoDbUtility;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.mongodb.*;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.IndexOptions;
-import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.result.UpdateResult;
-import org.bson.BSON;
-import org.bson.Document;
-import org.bson.conversions.Bson;
-
-import java.io.IOException;
 
 public class ExchangeFloatRatesComHandler {
     private static final String PATH_TO_FLOAT_COM_RATE = "http://www.floatrates.com/daily/usd.xml";
@@ -28,14 +13,14 @@ public class ExchangeFloatRatesComHandler {
 
         //  set xml mapper and read values from requested XML currency rates file
         XmlMapper mapper = new XmlMapper();
-        Channel valutes = mapper.readValue(httpUtility.sendGet(PATH_TO_FLOAT_COM_RATE),
-                Channel.class);
+        FloatExchangeRate valutes = mapper.readValue(httpUtility.sendGet(PATH_TO_FLOAT_COM_RATE),
+                FloatExchangeRate.class);
 
         //  connect to mongodb, choose db and collection from db
 //        MongoClient mongoClient = new MongoClient("localhost", 27017);
 //        MongoDatabase database = mongoClient.getDatabase("myMongoDB");
 //        MongoCollection<Document> collection = database.getCollection("newFloatRates");
-        MongoDbHandler databaseHandler = new MongoDbHandler();
+        MongoDbUtility databaseHandler = new MongoDbUtility();
         databaseHandler.establishConnectionToDB("localhost", 27017, "myMongoDB");
         databaseHandler.establishConnectionToCollection("newFloatRates");
         databaseHandler.setUniqueIndex("name");

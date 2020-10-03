@@ -13,7 +13,7 @@ import java.util.List;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JacksonXmlRootElement(localName = "channel")
-public class Channel {
+public class FloatExchangeRate {
     @JacksonXmlProperty(localName = "title")
     private String title;
 
@@ -31,7 +31,7 @@ public class Channel {
 
     @JacksonXmlProperty(localName = "item")
     @JacksonXmlElementWrapper(useWrapping = false)
-    private List<CurrencyItem> currencies = new ArrayList<>();
+    private List<FloatCurrency> currencies = new ArrayList<>();
 
     public String getTitle() {
         return title;
@@ -73,11 +73,11 @@ public class Channel {
         this.pubDate = pubDate;
     }
 
-    public List<CurrencyItem> getCurrencies() {
+    public List<FloatCurrency> getCurrencies() {
         return currencies;
     }
 
-    public void setCurrencies(List<CurrencyItem> currencies) {
+    public void setCurrencies(List<FloatCurrency> currencies) {
         this.currencies = currencies;
     }
 

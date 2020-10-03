@@ -2,7 +2,7 @@ package BnmRate;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
-public class Currency {
+public class BnmCurrency {
     //  id of currency
     @JacksonXmlProperty(localName = "ID")
     private short id;
