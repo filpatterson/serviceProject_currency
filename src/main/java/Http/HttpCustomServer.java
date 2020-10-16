@@ -6,18 +6,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
 
 import java.io.*;
-import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class HttpCustomServer implements HttpHandler {
     HashMap<Long, Process> processStorage = new HashMap<>();
     CurrencyTools currencyTools = null;
+
+    public HttpCustomServer(CurrencyTools currencyTools) {
+        this.currencyTools = currencyTools;
+    }
+
+    public CurrencyTools getCurrencyTools() {
+        return currencyTools;
+    }
 
     /**
      * handle for all incoming requests
@@ -188,12 +192,10 @@ public class HttpCustomServer implements HttpHandler {
             HashMap<String, String> arguments = requestedProcess.getProcessArguments();
 
             //  calculate result
-//            double result = currencyTools.convertCurrencies(arguments.get("firstCurrency"),
-//                    arguments.get("secondCurrency"),
-//                    arguments.get("source"),
-//                    Double.parseDouble(arguments.get("amount")));
-
-            int result = 12;
+            double result = currencyTools.convertCurrencies(arguments.get("firstCurrency"),
+                    arguments.get("secondCurrency"),
+                    arguments.get("source"),
+                    Double.parseDouble(arguments.get("amount")));
 
             //  give response to client
             String response = "{\"response\":" + result + "}";
@@ -223,16 +225,5 @@ public class HttpCustomServer implements HttpHandler {
         outputStream.write(response.getBytes());
         outputStream.flush();
         outputStream.close();
-    }
-
-
-
-    public static void main(String[] args) throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 8001), 0);
-        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
-        server.createContext("/test", new HttpCustomServer());
-        server.setExecutor(threadPoolExecutor);
-        server.start();
-        System.out.println(" Server started on port 8001");
     }
 }
