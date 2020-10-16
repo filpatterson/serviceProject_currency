@@ -5,10 +5,10 @@ import org.bson.Document;
 
 import java.util.ArrayList;
 
-public class CommandInterpreter {
+public class CurrencyTools {
     private MongoDbUtility mongoDbUtility = new MongoDbUtility();
 
-    CommandInterpreter(String host, int port, String databaseName){
+    public CurrencyTools(String host, int port, String databaseName){
         mongoDbUtility.establishConnectionToDB(host, port, databaseName);
     }
 
@@ -48,7 +48,7 @@ public class CommandInterpreter {
         }
     }
 
-    private double convertCurrencies(String fromCurrency, String toCurrency, String source, Double amount) throws Exception {
+    public double convertCurrencies(String fromCurrency, String toCurrency, String source, Double amount) throws Exception {
         ArrayList<Document> fromResult = mongoDbUtility.findElements(source, "name", fromCurrency);
         ArrayList<Document> toResult = mongoDbUtility.findElements(source, "name", toCurrency);
 

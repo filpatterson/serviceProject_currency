@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class CommandListener {
     public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
-        CommandInterpreter commandInterpreter = new CommandInterpreter("localhost", 27017, "myMongoDB");
+        CurrencyTools commandInterpreter = new CurrencyTools("localhost", 27017, "myMongoDB");
 
         BnmRatesHandler bnmRatesHandler = new BnmRatesHandler();
         FloatRatesHandler floatRatesHandler = new FloatRatesHandler();

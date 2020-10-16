@@ -1,23 +1,40 @@
 package Http.Unit;
 
-public class Process {
-    private static int processesCounter = 0;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-    private int id;
+import java.util.HashMap;
+
+public class Process {
+    //  global counter of running processes
+    private static long processesCounter = 0;
+
+    private long id;
+
+    //  name of function related to process
     private String processName;
+
+    //  current status of process
     private String status;
 
+    //  arguments of chosen process
+    @JsonIgnore
+    HashMap<String, String> processArguments;
+
+    //  process constructor
     public Process(String processName) {
         id = processesCounter++;
         this.processName = processName;
         status = "created";
+        processArguments = new HashMap<>();
     }
 
-    public int getId() {
+    //  getters and setters
+
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -35,5 +52,23 @@ public class Process {
 
     public void setProcessName(String processName) {
         this.processName = processName;
+    }
+
+    public HashMap<String, String> getProcessArguments() {
+        return processArguments;
+    }
+
+    public void setProcessArguments(HashMap<String, String> processArguments) {
+        this.processArguments = processArguments;
+    }
+
+    @Override
+    public String toString() {
+        return "Process{" +
+                "id=" + id +
+                ", processName='" + processName + '\'' +
+                ", status='" + status + '\'' +
+                ", processArguments=" + processArguments +
+                '}';
     }
 }
