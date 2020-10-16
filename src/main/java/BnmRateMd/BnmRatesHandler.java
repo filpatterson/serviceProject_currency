@@ -1,4 +1,4 @@
-package BnmRate;
+package BnmRateMd;
 
 import Actor.Actor;
 import Actor.Behavior;

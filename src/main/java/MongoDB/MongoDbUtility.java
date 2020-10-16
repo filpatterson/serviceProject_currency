@@ -1,6 +1,6 @@
 package MongoDB;
 
-import BnmRate.BnmCurrency;
+import BnmRateMd.BnmCurrency;
 import FloatRatesCom.FloatCurrency;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;

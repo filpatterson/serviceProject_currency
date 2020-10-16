@@ -1,4 +1,4 @@
-package BnmRate;
+package BnmRateMd;
 
 import Http.HttpUtility;
 import MongoDB.MongoDbUtility;
