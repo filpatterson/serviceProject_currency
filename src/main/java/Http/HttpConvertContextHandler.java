@@ -11,11 +11,11 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
-public class HttpCustomServer implements HttpHandler {
+public class HttpConvertContextHandler implements HttpHandler {
     HashMap<Long, Process> processStorage = new HashMap<>();
     CurrencyTools currencyTools = null;
 
-    public HttpCustomServer(CurrencyTools currencyTools) {
+    public HttpConvertContextHandler(CurrencyTools currencyTools) {
         this.currencyTools = currencyTools;
     }
 
