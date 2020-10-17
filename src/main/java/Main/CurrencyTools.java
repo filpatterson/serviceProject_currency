@@ -6,6 +6,8 @@ import org.bson.Document;
 import java.util.ArrayList;
 
 public class CurrencyTools {
+
+    //  utility for connection with MongoDB
     private MongoDbUtility mongoDbUtility = new MongoDbUtility();
 
     public MongoDbUtility getMongoDbUtility() {
@@ -20,7 +22,17 @@ public class CurrencyTools {
         mongoDbUtility.establishConnectionToDB(host, port, databaseName);
     }
 
+    /**
+     * convert from one currency to another required amount from requested source
+     * @param fromCurrency from which currency to convert
+     * @param toCurrency to which convert currency
+     * @param source from which source take rates
+     * @param amount how much currency must be converted
+     * @return result of conversion
+     * @throws Exception error in work
+     */
     public double convertCurrencies(String fromCurrency, String toCurrency, String source, Double amount) throws Exception {
+        //  request currency values from DB
         ArrayList<Document> fromResult = mongoDbUtility.findElements(source, "name", fromCurrency);
         ArrayList<Document> toResult = mongoDbUtility.findElements(source, "name", toCurrency);
 

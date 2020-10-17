@@ -38,38 +38,105 @@ public class HttpUtility {
         return response.body();
     }
 
-    public void sendJsonPost(String destinationPage, String functionName, String firstArgument) throws IOException {
-        String payload = "{\"functionName\":\"" + functionName +"\",\"amount\":"+ firstArgument +"}";
-        StringEntity entity = new StringEntity(payload,
-                ContentType.APPLICATION_JSON);
+    /**
+     * send request to establish connection with gateway
+     * @param destinationPage address of request
+     * @param jsonRequest json request
+     * @throws IOException i/o error
+     */
+    public void sendHandshakeJsonPost(String destinationPage, String jsonRequest) throws IOException {
 
+        //  append json content type property
+        StringEntity entity = new StringEntity(jsonRequest, ContentType.APPLICATION_JSON);
+
+        //  initialize client
         CloseableHttpClient httpClient = HttpClients.createDefault();
+
+        //  make POST request
         HttpPost request = new HttpPost(destinationPage);
+
+        //  append headers to request
         request.setHeader("Accept", "application/json");
         request.setHeader("Content-Type", "application/json");
+        request.setHeader("Service-Call", "true");
         request.setEntity(entity);
 
+        //  wait for response and handle it as String
         CloseableHttpResponse response = httpClient.execute(request);
         ResponseHandler<String> handler = new BasicResponseHandler();
         System.out.println(handler.handleResponse(response));
     }
 
-    public void sendJsonPut(String destinationPage, Long id, String nameOfArgument, String argumentValue) throws IOException {
-        String payload = "{\"id\":" + id + ",\"" + nameOfArgument + "\":\"" + argumentValue + "\"}";
+    /**
+     * send json POST request that will initialize process on service
+     * @param destinationPage where to send request
+     * @param functionName json identifier of method
+     * @param firstArgument value appended to identifier
+     * @throws IOException i/o error
+     */
+    public void sendJsonPost(String destinationPage, String functionName, String firstArgument) throws IOException {
+        //  generate payload for request based on parameters
+        String payload = "{\"functionName\":\"" + functionName +"\",\"amount\":"+ firstArgument +"}";
+
+        //  append json content type property
         StringEntity entity = new StringEntity(payload,
                 ContentType.APPLICATION_JSON);
 
+        // initialize client
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpPut request = new HttpPut(destinationPage);
+
+        //  make PUT request
+        HttpPost request = new HttpPost(destinationPage);
+
+        //  append headers to request
         request.setHeader("Accept", "application/json");
         request.setHeader("Content-Type", "application/json");
         request.setEntity(entity);
 
+        //  wait for response and handle it as String
         CloseableHttpResponse response = httpClient.execute(request);
         ResponseHandler<String> handler = new BasicResponseHandler();
         System.out.println(handler.handleResponse(response));
     }
 
+    /**
+     * send json PUT request that will continue work with process
+     * @param destinationPage where is directed request
+     * @param id id of request to continue
+     * @param nameOfArgument key of argument
+     * @param argumentValue value of argument
+     * @throws IOException i/o exception
+     */
+    public void sendJsonPut(String destinationPage, Long id, String nameOfArgument, String argumentValue) throws IOException {
+        //  generate payload for request based on parameters
+        String payload = "{\"id\":" + id + ",\"" + nameOfArgument + "\":\"" + argumentValue + "\"}";
+
+        //  append content type propety to payload
+        StringEntity entity = new StringEntity(payload,
+                ContentType.APPLICATION_JSON);
+
+        //  initialize client
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+
+        //  generate PUT request
+        HttpPut request = new HttpPut(destinationPage);
+
+        //  append headers to request
+        request.setHeader("Accept", "application/json");
+        request.setHeader("Content-Type", "application/json");
+        request.setEntity(entity);
+
+        //  wait for response and handle it as String
+        CloseableHttpResponse response = httpClient.execute(request);
+        ResponseHandler<String> handler = new BasicResponseHandler();
+        System.out.println(handler.handleResponse(response));
+    }
+
+    /**
+     * send GET request that will finish work of process and get result
+     * @param destinationPageWithId where is directed request and ID of process to close and get
+     * @throws IOException i/o error
+     */
     public void sendJsonGet(String destinationPageWithId) throws IOException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpGet request = new HttpGet(destinationPageWithId);

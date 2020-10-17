@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -107,6 +108,8 @@ public class HttpConvertContextHandler implements HttpHandler {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode node = objectMapper.readValue(requestPayload, ObjectNode.class);
 
+        System.out.println(requestPayload);
+
         //  start process with taken from JSON command name
         Process initializedProcess = new Process(node.get("functionName").asText());
         initializedProcess.getProcessArguments().put("amount", node.get("amount").asText());
@@ -198,8 +201,10 @@ public class HttpConvertContextHandler implements HttpHandler {
                     Double.parseDouble(arguments.get("amount")));
 
             //  give response to client
-            String response = "{\"response\":" + result + "}";
-            sendResponse(httpExchange, response);
+            JSONObject jsonResponse = new JSONObject();
+            jsonResponse.put("response", result);
+            jsonResponse.put("id", requestedIndex);
+            sendResponse(httpExchange, jsonResponse.toString());
 
             //  remove process from storage
             processStorage.remove(requestedIndex);
@@ -219,6 +224,7 @@ public class HttpConvertContextHandler implements HttpHandler {
         httpExchange.getResponseHeaders().set("Content-Type", "application/json");
         httpExchange.sendResponseHeaders(200, response.length());
         System.out.println(response);
+        System.out.println(httpExchange.getRemoteAddress());
 
         //  send response to the client
         OutputStream outputStream = httpExchange.getResponseBody();
