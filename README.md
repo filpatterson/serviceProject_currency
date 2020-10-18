@@ -7,7 +7,7 @@ service. Links to exchange rates sources:
 * http://www.floatrates.com
 
 Service is using actor multithreading system for getting information and writing it to MongoDB,
-and standard Java http multithreading server.
+and standard Java http multithreading server with thread pool.
 
 ### Taking information from exchange rate sources
 
