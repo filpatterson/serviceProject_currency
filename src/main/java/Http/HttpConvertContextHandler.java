@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 public class HttpConvertContextHandler implements HttpHandler {
-    HashMap<Long, Process> processStorage = new HashMap<>();
+    HashMap<String, Process> processStorage = new HashMap<>();
     CurrencyTools currencyTools = null;
 
     public HttpConvertContextHandler(CurrencyTools currencyTools) {
@@ -134,9 +134,9 @@ public class HttpConvertContextHandler implements HttpHandler {
         ObjectNode node = objectMapper.readValue(requestPayload, ObjectNode.class);
 
         //  check if such process exists in storage
-        if(processStorage.containsKey(node.get("id").asLong())) {
+        if(processStorage.containsKey(node.get("id").asText())) {
             //  get existing process from storage
-            Process requestedProcess = processStorage.get(node.get("id").asLong());
+            Process requestedProcess = processStorage.get(node.get("id").asText());
 
             //  set execution process status
             requestedProcess.setStatus("building");
@@ -169,9 +169,9 @@ public class HttpConvertContextHandler implements HttpHandler {
      */
     private void handleGetResponse(HttpExchange httpExchange) throws Exception {
         //  get from uri required process ID
-        long requestedIndex = Long.parseLong(httpExchange.getRequestURI().toString().
+        String requestedIndex = httpExchange.getRequestURI().toString().
                 split("\\?")[1].
-                split("=")[1]);
+                split("=")[1];
 
         //  check if there is such id
         if(processStorage.containsKey(requestedIndex)) {
@@ -210,6 +210,8 @@ public class HttpConvertContextHandler implements HttpHandler {
             processStorage.remove(requestedIndex);
         } else {
             System.err.println("there is no such process");
+            System.out.println(processStorage.keySet());
+            System.out.println(requestedIndex);
         }
     }
 

@@ -1,5 +1,7 @@
 package Http;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -64,7 +66,8 @@ public class HttpUtility {
         //  wait for response and handle it as String
         CloseableHttpResponse response = httpClient.execute(request);
         ResponseHandler<String> handler = new BasicResponseHandler();
-        System.out.println(handler.handleResponse(response));
+        String textResponse = handler.handleResponse(response);
+        System.out.println(textResponse);
     }
 
     /**
@@ -74,7 +77,7 @@ public class HttpUtility {
      * @param firstArgument value appended to identifier
      * @throws IOException i/o error
      */
-    public void sendJsonPost(String destinationPage, String functionName, String firstArgument) throws IOException {
+    public String sendJsonPost(String destinationPage, String functionName, String firstArgument) throws IOException {
         //  generate payload for request based on parameters
         String payload = "{\"functionName\":\"" + functionName +"\",\"amount\":"+ firstArgument +"}";
 
@@ -96,7 +99,14 @@ public class HttpUtility {
         //  wait for response and handle it as String
         CloseableHttpResponse response = httpClient.execute(request);
         ResponseHandler<String> handler = new BasicResponseHandler();
-        System.out.println(handler.handleResponse(response));
+        String textResponse = handler.handleResponse(response);
+        System.out.println(textResponse);
+
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode node = objectMapper.readValue(textResponse, ObjectNode.class);
+
+        return node.get("id").asText();
     }
 
     /**
@@ -107,7 +117,7 @@ public class HttpUtility {
      * @param argumentValue value of argument
      * @throws IOException i/o exception
      */
-    public void sendJsonPut(String destinationPage, Long id, String nameOfArgument, String argumentValue) throws IOException {
+    public String sendJsonPut(String destinationPage, String id, String nameOfArgument, String argumentValue) throws IOException {
         //  generate payload for request based on parameters
         String payload = "{\"id\":" + id + ",\"" + nameOfArgument + "\":\"" + argumentValue + "\"}";
 
@@ -129,7 +139,13 @@ public class HttpUtility {
         //  wait for response and handle it as String
         CloseableHttpResponse response = httpClient.execute(request);
         ResponseHandler<String> handler = new BasicResponseHandler();
-        System.out.println(handler.handleResponse(response));
+        String textResponse = handler.handleResponse(response);
+        System.out.println(textResponse);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode node = objectMapper.readValue(textResponse, ObjectNode.class);
+
+        return node.get("id").asText();
     }
 
     /**

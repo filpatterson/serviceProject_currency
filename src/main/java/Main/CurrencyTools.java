@@ -39,13 +39,19 @@ public class CurrencyTools {
         if(fromResult.size() > 1 || toResult.size() > 1) {
             throw new Exception("there are too many elements with such name, try again");
         } else if (fromResult.size() == 0 || toResult.size() == 0){
-            System.err.println("not fount currency");
+            System.err.println("not found currency");
             return 0;
-        } else {
+        } else if(source.equals("newFloatRates")) {
             double fromValue = Double.parseDouble((String) fromResult.get(0).get("rate"));
             double toValue = Double.parseDouble((String) toResult.get(0).get("rate"));
 
             return (amount * fromValue) / toValue;
+        } else if(source.equals("bnmRates")) {
+            double fromValue = (double) fromResult.get(0).get("value");
+            double toValue = (double) toResult.get(0).get("value");
+
+            return (amount * fromValue) / toValue;
         }
+        return 0;
     }
 }

@@ -16,8 +16,24 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 public class ServiceEntity {
     public static void main(String[] args) throws IOException, Actor.DeadException {
+        if(args.length == 7) {
+            GlobalParameters.databaseHost = args[0];
+            GlobalParameters.databasePort = Integer.parseInt(args[1]);
+            GlobalParameters.databaseName = args[2];
+            GlobalParameters.gatewayHost = args[3];
+            GlobalParameters.gatewayPort = args[4];
+            GlobalParameters.serviceHost = args[5];
+            GlobalParameters.servicePort = args[6];
+        }
+
         //  establish connection to DB
-        HttpConvertContextHandler customServer = new HttpConvertContextHandler(new CurrencyTools("localhost", 27017, "myMongoDB"));
+        HttpConvertContextHandler customServer = new HttpConvertContextHandler(
+                new CurrencyTools(
+                        GlobalParameters.databaseHost,
+                        GlobalParameters.databasePort,
+                        GlobalParameters.databaseName
+                )
+        );
 
         //  create handlers for interacting with currency data
         BnmRatesHandler bnmRatesHandler = new BnmRatesHandler();
@@ -34,12 +50,19 @@ public class ServiceEntity {
         //  handshake connection of service with gateway
         JSONObject jsonRequestForConnection = new JSONObject();
         jsonRequestForConnection.put("functionName", "convert");
-        jsonRequestForConnection.put("address", "http://localhost:8002/convert");
+        jsonRequestForConnection.put(
+                "address",
+                "http://" + GlobalParameters.serviceHost + ":" + GlobalParameters.servicePort + "/convert"
+        );
         HttpUtility httpUtility = new HttpUtility();
-        httpUtility.sendHandshakeJsonPost("http://localhost:8003/", jsonRequestForConnection.toString());
+        httpUtility.sendHandshakeJsonPost(
+                "http://" + GlobalParameters.gatewayHost + ":" + GlobalParameters.gatewayPort + "/",
+                jsonRequestForConnection.toString()
+        );
 
         //  create and start server
-        HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 8002), 0);
+        HttpServer server = HttpServer.create(
+                new InetSocketAddress("localhost", Integer.parseInt(GlobalParameters.servicePort)), 0);
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
         server.createContext("/convert", customServer);
         server.setExecutor(threadPoolExecutor);

@@ -1,5 +1,6 @@
 package Http.Unit;
 
+import Main.GlobalParameters;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.HashMap;
@@ -8,7 +9,7 @@ public class Process {
     //  global counter of running processes
     private static long processesCounter = 0;
 
-    private long id;
+    private String id;
 
     //  name of function related to process
     private String processName;
@@ -22,7 +23,7 @@ public class Process {
 
     //  process constructor
     public Process(String processName) {
-        id = processesCounter++;
+        id = GlobalParameters.servicePort + processesCounter++;
         this.processName = processName;
         status = "created";
         processArguments = new HashMap<>();
@@ -30,11 +31,11 @@ public class Process {
 
     //  getters and setters
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
