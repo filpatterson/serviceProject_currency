@@ -71,6 +71,65 @@ public class HttpUtility {
     }
 
     /**
+     * send broadcast to all services available for gateway
+     * @param destinationPage where to send
+     * @param jsonRequest what to send
+     * @throws IOException
+     */
+    public void sendServiceCall(String destinationPage, String jsonRequest) throws IOException {
+        //  append json content type property
+        StringEntity entity = new StringEntity(jsonRequest, ContentType.APPLICATION_JSON);
+
+        //  initialize client
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+
+        //  make POST request
+        HttpPost request = new HttpPost(destinationPage);
+
+        //  append headers to request
+        request.setHeader("Accept", "application/json");
+        request.setHeader("Content-Type", "application/json");
+        request.setHeader("Service-Call", "broadcast:all");
+        request.setEntity(entity);
+
+        //  wait for response and handle it as String
+        CloseableHttpResponse response = httpClient.execute(request);
+        ResponseHandler<String> handler = new BasicResponseHandler();
+        String textResponse = handler.handleResponse(response);
+        System.out.println(textResponse);
+    }
+
+    /**
+     * send broadcast to services that are attached to the required command
+     * @param destinationPage where to send
+     * @param jsonRequest what to send
+     * @param commandRequired command services of which are required
+     * @throws IOException
+     */
+    public void sendServiceCallToServicesWithCommand(String destinationPage, String jsonRequest, String commandRequired) throws IOException {
+        //  append json content type property
+        StringEntity entity = new StringEntity(jsonRequest, ContentType.APPLICATION_JSON);
+
+        //  initialize client
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+
+        //  make POST request
+        HttpPost request = new HttpPost(destinationPage);
+
+        //  append headers to request
+        request.setHeader("Accept", "application/json");
+        request.setHeader("Content-Type", "application/json");
+        request.setHeader("Service-Call", "broadcast:" + commandRequired);
+        request.setEntity(entity);
+
+        //  wait for response and handle it as String
+        CloseableHttpResponse response = httpClient.execute(request);
+        ResponseHandler<String> handler = new BasicResponseHandler();
+        String textResponse = handler.handleResponse(response);
+        System.out.println(textResponse);
+    }
+
+    /**
      * send json POST request that will initialize process on service
      * @param destinationPage where to send request
      * @param functionName json identifier of method

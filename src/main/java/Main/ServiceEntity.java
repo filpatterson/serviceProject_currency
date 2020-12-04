@@ -67,6 +67,6 @@ public class ServiceEntity {
         server.createContext("/convert", customServer);
         server.setExecutor(threadPoolExecutor);
         server.start();
-        System.out.println(" Server started on port 8002");
+        System.out.println(" Server started on port " + GlobalParameters.servicePort);
     }
 }

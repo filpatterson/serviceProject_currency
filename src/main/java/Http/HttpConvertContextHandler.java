@@ -110,6 +110,15 @@ public class HttpConvertContextHandler implements HttpHandler {
 
         System.out.println(requestPayload);
 
+        //  check this command to be equal to the broadcast trigger
+        if(httpExchange.getRequestHeaders().containsKey("Service-Call")) {
+            if(httpExchange.getRequestHeaders().get("Service-Call").get(0).equals("broadcast")) {
+                System.out.println("received broadcast: " + node);
+                sendResponse(httpExchange, "well, it is broadcast");
+                return;
+            }
+        }
+
         //  start process with taken from JSON command name
         Process initializedProcess = new Process(node.get("functionName").asText());
         initializedProcess.getProcessArguments().put("amount", node.get("amount").asText());
@@ -204,6 +213,7 @@ public class HttpConvertContextHandler implements HttpHandler {
             JSONObject jsonResponse = new JSONObject();
             jsonResponse.put("response", result);
             jsonResponse.put("id", requestedIndex);
+
             sendResponse(httpExchange, jsonResponse.toString());
 
             //  remove process from storage
